@@ -74,7 +74,6 @@ button:disabled {
 }
 .achievement.unlocked { background:#2ecc71; color:#000; }
 
-/* ACHIEVEMENT POPUP */
 #popup {
   position:fixed;
   top:20px;
@@ -138,10 +137,13 @@ button:disabled {
 <div id="popup"></div>
 
 <script>
-let nerds=0, nerdsPerClick=1, nerdsPerSecond=0, totalEarned=0;
-let equippedSkin="nerd.png";
-let purchasedSkins=["nerd.png"];
-let unlockedAchievements=[];
+let nerds = 0;
+let nerdsPerClick = 1;
+let nerdsPerSecond = 0;
+let totalEarned = 0;
+let equippedSkin = "nerd.png";
+let purchasedSkins = ["nerd.png"];
+let unlockedAchievements = [];
 
 /* UPGRADES */
 const clickUpgrades=[{name:"Better Click",cost:10,amount:1}];
@@ -193,6 +195,7 @@ const popup=document.getElementById("popup");
 
 function showPopup(text){
   popup.textContent="Achievement Unlocked: "+text;
+  popup.style.display="block";
   popup.classList.add("show");
   setTimeout(()=>{
     popup.classList.remove("show");
@@ -274,15 +277,27 @@ function buildSkins(){
 
 function saveGame(){
   localStorage.setItem("plesNerd2Save",JSON.stringify({
-    nerds,nerdsPerClick,nerdsPerSecond,totalEarned,
-    equippedSkin,purchasedSkins,unlockedAchievements
+    nerds,
+    nerdsPerClick,
+    nerdsPerSecond,
+    totalEarned,
+    equippedSkin,
+    purchasedSkins,
+    unlockedAchievements
   }));
 }
 
 function loadGame(){
-  const s=JSON.parse(localStorage.getItem("plesNerd2Save"));
-  if(!s) return;
-  Object.assign(window,s);
+  const data = localStorage.getItem("plesNerd2Save");
+  if(!data) return;
+  const s = JSON.parse(data);
+  nerds = s.nerds ?? nerds;
+  nerdsPerClick = s.nerdsPerClick ?? nerdsPerClick;
+  nerdsPerSecond = s.nerdsPerSecond ?? nerdsPerSecond;
+  totalEarned = s.totalEarned ?? totalEarned;
+  equippedSkin = s.equippedSkin ?? equippedSkin;
+  purchasedSkins = s.purchasedSkins ?? purchasedSkins;
+  unlockedAchievements = s.unlockedAchievements ?? unlockedAchievements;
 }
 
 function updateUI(){
@@ -320,7 +335,6 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
 });
 
 loadGame();
-buildUpgrades();
 updateUI();
 </script>
 </body>
