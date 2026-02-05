@@ -137,23 +137,35 @@ button:disabled {
 <div id="popup"></div>
 
 <script>
-let nerds = 0;
-let nerdsPerClick = 1;
-let nerdsPerSecond = 0;
-let totalEarned = 0;
-let equippedSkin = "nerd.png";
-let purchasedSkins = ["nerd.png"];
-let unlockedAchievements = [];
+let nerds=0, nerdsPerClick=1, nerdsPerSecond=0, totalEarned=0;
+let equippedSkin="nerd.png";
+let purchasedSkins=["nerd.png"];
+let unlockedAchievements=[];
 
 /* UPGRADES */
-const clickUpgrades=[{name:"Better Click",cost:10,amount:1}];
+const clickUpgrades=[{name:"better click",cost:10,amount:1}];
+
 const autoUpgrades=[
-  {name:"handful of nerds",cost:55,amount:2},
-  {name:"box of nerds",cost:300,amount:20},
-  {name:"bucket of nerds",cost:750,amount:40},
-  {name:"crate of nerds",cost:20000,amount:80},
-  {name:"van of nerds",cost:100000,amount:500}
+  {name:"handful of nerd",amount:2,cost:50},
+  {name:"box of nerd",amount:10,cost:200},
+  {name:"bucket of nerd",amount:30,cost:500},
+  {name:"crate of nerd",amount:120,cost:3000},
+  {name:"van of nerd",amount:300,cost:7000},
+  {name:"yacht of nerd",amount:700,cost:14000},
+  {name:"mansion of nerd",amount:2000,cost:400000},
+  {name:"island of nerd",amount:10000,cost:1800000},
+  {name:"country of nerd",amount:35000,cost:5000000},
+  {name:"continent of nerd",amount:80000,cost:10000000},
+  {name:"comet of nerd",amount:275000,cost:30000000},
+  {name:"planet of nerd",amount:800000,cost:75000000},
+  {name:"star of nerd",amount:2000000,cost:200000000},
+  {name:"solar system of nerd",amount:3500000,cost:300000000},
+  {name:"galaxy cluster of nerd",amount:9000000,cost:1000000001},
+  {name:"galaxy of nerd",amount:15000000,cost:1500000000},
+  {name:"universe of nerd",amount:50000000,cost:5000000000},
+  {name:"multiverse of nerd",amount:200000000,cost:15000000000}
 ];
+
 
 /* SKINS */
 const skins=[
