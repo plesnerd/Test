@@ -12,23 +12,82 @@
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
-* { box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; font-family: 'Press Start 2P', monospace; }
+* { box-sizing:border-box; user-select:none; font-family:'Press Start 2P', monospace; }
 body { margin:0; padding:10px; background:#00a1d8; color:white; text-align:center; }
-h1 { margin:12px 0; font-size:1.6rem; color:#e63b7a; font-weight:bold; text-shadow:2px 2px #000; }
-h2 { margin-top:30px; font-size:0.9rem; text-shadow:1px 1px #000; }
-#counter { font-size:0.8rem; margin-bottom:15px; line-height:1.6; text-shadow:1px 1px #000; }
-#nerdImage { width:min(70vw,240px); cursor:pointer; image-rendering: pixelated; transition: transform 0.08s ease; }
-#nerdImage:active { transform: scale(0.92); }
-.upgrade-section { margin-top:15px; display:flex; flex-direction:column; gap:12px; align-items:center; }
-button { width:95%; max-width:320px; background:#e63b7a; border:4px solid #000; color:white; padding:14px; font-size:0.65rem; border-radius:0; cursor:pointer; line-height:1.5; text-shadow:1px 1px #000; box-shadow:4px 4px #000; transition: transform 0.05s; }
+
+h1 { margin:12px 0; font-size:1.6rem; color:#e63b7a; text-shadow:2px 2px #000; }
+h2 { margin-top:22px; font-size:0.75rem; text-shadow:1px 1px #000; }
+
+#counter { font-size:0.7rem; margin-bottom:10px; line-height:1.6; text-shadow:1px 1px #000; }
+#rank { margin-top:6px; display:flex; justify-content:center; align-items:center; gap:6px; }
+
+.badge {
+  width:14px; height:14px;
+  border:3px solid #000;
+  background:#888;
+}
+.badge.bronze { background:#cd7f32; }
+.badge.silver { background:#c0c0c0; }
+.badge.gold { background:#ffd700; }
+.badge.platinum { background:#7fffd4; }
+.badge.diamond { background:#4fc3f7; }
+.badge.elite { background:#e91e63; }
+.badge.champion { background:#9c27b0; }
+.badge.unreal { background:#ff5722; }
+
+#nerdImage { width:min(70vw,240px); cursor:pointer; image-rendering:pixelated; }
+#nerdImage:active { transform:scale(0.92); }
+
+.upgrade-section { margin-top:12px; display:flex; flex-direction:column; gap:10px; align-items:center; }
+
+button {
+  width:95%; max-width:340px;
+  background:#e63b7a;
+  border:4px solid #000;
+  color:white;
+  padding:12px;
+  font-size:0.55rem;
+  box-shadow:4px 4px #000;
+  cursor:pointer;
+}
 button:active { transform:translate(4px,4px); box-shadow:none; }
 button:disabled { opacity:0.5; cursor:not-allowed; box-shadow:none; }
-small { font-size:0.55rem; opacity:0.85; }
-.tabs { display:flex; justify-content:center; gap:10px; margin-top:20px; }
-.tab-btn { background:#e63b7a; border:4px solid #000; color:white; padding:10px; cursor:pointer; font-size:0.65rem; border-radius:0; box-shadow:4px 4px #000; }
+
+.tabs { display:flex; justify-content:center; gap:6px; margin-top:18px; flex-wrap:wrap; }
+.tab-btn { padding:8px; font-size:0.5rem; border:4px solid #000; background:#e63b7a; box-shadow:4px 4px #000; }
 .tab-btn.active { background:#ff75a0; }
+
 .tab-content { display:none; margin-top:15px; }
 .tab-content.active { display:block; }
+
+.achievement {
+  border:3px solid #000;
+  background:#111;
+  padding:8px;
+  width:95%;
+  max-width:340px;
+  font-size:0.5rem;
+}
+.achievement.unlocked { background:#2ecc71; color:#000; }
+
+/* ACHIEVEMENT POPUP */
+#popup {
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%) translateY(-120%);
+  background:#2ecc71;
+  color:#000;
+  border:4px solid #000;
+  padding:12px;
+  font-size:0.55rem;
+  box-shadow:6px 6px #000;
+  transition:transform 0.4s ease;
+  z-index:999;
+}
+#popup.show {
+  transform:translateX(-50%) translateY(0);
+}
 </style>
 </head>
 <body>
@@ -36,21 +95,23 @@ small { font-size:0.55rem; opacity:0.85; }
 <h1>ples nerd 2</h1>
 
 <div id="counter">
-  nerd: <span id="nerds">0</span><br>
+  nerds: <span id="nerds">0</span><br>
   <small><span id="rate">0</span> nerd/sec</small>
+  <div id="rank"></div>
 </div>
 
-<img id="nerdImage" src="nerd.png" alt="Nerd">
+<img id="nerdImage" src="nerd.png">
 
-<h2>clicking upgrades</h2>
+<h2>click upgrades</h2>
 <div id="clickUpgrades" class="upgrade-section"></div>
 
-<h2>upgrades</h2>
+<h2>auto upgrades</h2>
 <div id="autoUpgrades" class="upgrade-section"></div>
 
 <div class="tabs">
   <div class="tab-btn active" data-tab="shop">Shop</div>
   <div class="tab-btn" data-tab="skins">Skins</div>
+  <div class="tab-btn" data-tab="achievements">Achievements</div>
 </div>
 
 <div id="shop" class="tab-content active">
@@ -63,181 +124,182 @@ small { font-size:0.55rem; opacity:0.85; }
   <div id="skinLocker" class="upgrade-section"></div>
 </div>
 
+<div id="achievements" class="tab-content">
+  <h2>Achievements</h2>
+  <div id="achievementList" class="upgrade-section"></div>
+</div>
+
+<div id="popup"></div>
+
 <script>
-let nerds = 0;
-let nerdsPerClick = 1;
-let nerdsPerSecond = 0;
-let equippedSkin = "nerd.png";
-let purchasedSkins = ["nerd.png"]; // Always start with default skin purchased
+let nerds=0, nerdsPerClick=1, nerdsPerSecond=0, totalEarned=0;
+let equippedSkin="nerd.png";
+let purchasedSkins=["nerd.png"];
+let unlockedAchievements=[];
 
-// Clicking upgrades
-const clickUpgrades = [
-  { name: "Better Click", cost: 10, amount: 1 }
+/* UPGRADES */
+const clickUpgrades=[{name:"Better Click",cost:10,amount:1}];
+const autoUpgrades=[
+  {name:"handful of nerds",cost:55,amount:2},
+  {name:"box of nerds",cost:300,amount:20},
+  {name:"bucket of nerds",cost:750,amount:40},
+  {name:"crate of nerds",cost:20000,amount:80},
+  {name:"van of nerds",cost:100000,amount:500}
 ];
 
-// Auto upgrades
-const autoUpgrades = [
-  { name: "handfull of Nerd", cost: 55, amount: 2 },
-  { name: "box of nerd", cost: 300, amount: 20 },
-  { name: "bucket of nerds", cost: 750, amount: 40 },
-  { name: "crate of nerd", cost: 20000, amount: 80 },
-  { name: "van of nerd", cost: 100000, amount: 50000 },
-  { name: "yacht of nerd", cost: 1000000, amount: 20000 },
-  { name: "mansion of nerd", cost: 10000000, amount: 200000 },
-  { name: "island of nerd", cost: 100000000, amount: 2000000 },
-  { name: "country of nerd", cost: 1000000000, amount: 200000000 },
-  { name: "continent of nerd", cost: 10000000000, amount: 2000000000 },
-  { name: "planet of nerd", cost: 100000000000, amount: 20000000000 },
-  { name: "solar system of nerd", cost: 1000000000000, amount: 200000000000 },
-  { name: "galaxy of nerd", cost: 10000000000000, amount: 2000000000000 },
-  { name: "galaxy cluster of nerd", cost: 100000000000000, amount: 20000000000000 },
-  { name: "universe of nerd", cost: 1000000000000000, amount: 200000000000000 }
+/* SKINS */
+const skins=[
+  {name:"nerd",img:"nerd.png",cost:0},
+  {name:"red nerd",img:"red.png",cost:5000},
+  {name:"orange nerd",img:"orange.png",cost:5000},
+  {name:"yellow nerd",img:"yellow.png",cost:5000},
+  {name:"green nerd",img:"green.png",cost:5000},
+  {name:"blue nerd",img:"blue.png",cost:5000},
+  {name:"purple nerd",img:"purple.png",cost:5000}
 ];
 
-// Skins
-const skins = [
-  { name: "nerd", img: "nerd.png", cost: 0 },
-  { name: "red nerd", img: "red.png", cost: 5000 },
-  { name: "orange nerd", img: "orange.png", cost: 5000 },
-  { name: "yellow nerd", img: "yellow.png", cost: 5000 },
-  { name: "green nerd", img: "green.png", cost: 5000 },
-  { name: "blue nerd", img: "blue.png", cost: 5000 },
-  { name: "purple nerd", img: "purple.png", cost: 5000 }
+/* RANKS */
+const ranks=[
+  {name:"Bronze",req:0,cls:"bronze"},
+  {name:"Silver",req:1000,cls:"silver"},
+  {name:"Gold",req:10000,cls:"gold"},
+  {name:"Platinum",req:100000,cls:"platinum"},
+  {name:"Diamond",req:1000000,cls:"diamond"},
+  {name:"Elite",req:10000000,cls:"elite"},
+  {name:"Champion",req:100000000,cls:"champion"},
+  {name:"Unreal",req:1000000000,cls:"unreal"}
 ];
 
-const nerdsSpan = document.getElementById("nerds");
-const rateSpan = document.getElementById("rate");
-const nerdImage = document.getElementById("nerdImage");
-const clickDiv = document.getElementById("clickUpgrades");
-const autoDiv = document.getElementById("autoUpgrades");
-const skinShopDiv = document.getElementById("skinShop");
-const skinLockerDiv = document.getElementById("skinLocker");
+/* ACHIEVEMENTS */
+const achievements=[
+  {id:"first",text:"First Click",check:()=>totalEarned>=1},
+  {id:"100",text:"100 Nerds",check:()=>totalEarned>=100},
+  {id:"1k",text:"1,000 Nerds",check:()=>totalEarned>=1000},
+  {id:"auto",text:"First Auto Upgrade",check:()=>nerdsPerSecond>0},
+  {id:"skin",text:"Buy a Skin",check:()=>purchasedSkins.length>1},
+  {id:"million",text:"1,000,000 Nerds",check:()=>totalEarned>=1_000_000}
+];
 
-function saveGame() {
-  localStorage.setItem("plesNerd2Save", JSON.stringify({
-    nerds,
-    nerdsPerClick,
-    nerdsPerSecond,
-    equippedSkin,
-    purchasedSkins
-  }));
+const nerdsSpan=document.getElementById("nerds");
+const rateSpan=document.getElementById("rate");
+const rankDiv=document.getElementById("rank");
+const popup=document.getElementById("popup");
+
+/* POPUP */
+function showPopup(text){
+  popup.textContent="Achievement Unlocked: "+text;
+  popup.classList.add("show");
+  setTimeout(()=>popup.classList.remove("show"),2500);
 }
 
-function loadGame() {
-  const save = JSON.parse(localStorage.getItem("plesNerd2Save"));
-  if (!save) return;
-  nerds = save.nerds;
-  nerdsPerClick = save.nerdsPerClick;
-  nerdsPerSecond = save.nerdsPerSecond;
-  equippedSkin = save.equippedSkin || "nerd.png";
-  purchasedSkins = save.purchasedSkins || ["nerd.png"];
+function getRank(){
+  return ranks.slice().reverse().find(r=>totalEarned>=r.req);
 }
 
-function updateUI() {
-  nerdsSpan.textContent = Math.floor(nerds);
-  rateSpan.textContent = nerdsPerSecond;
-  nerdImage.src = equippedSkin;
-
-  document.querySelectorAll(".upgrade-btn").forEach(btn => {
-    btn.disabled = nerds < Number(btn.dataset.cost);
-  });
-
-  document.querySelectorAll(".skin-btn").forEach(btn => {
-    const img = btn.dataset.img;
-    btn.disabled = nerds < Number(btn.dataset.cost) || purchasedSkins.includes(img);
-  });
-
-  buildSkinLocker();
-  saveGame();
-}
-
-function buildUpgrades() {
-  clickDiv.innerHTML = "";
-  autoDiv.innerHTML = "";
-
-  clickUpgrades.forEach(upg => {
-    const btn = document.createElement("button");
-    btn.className = "upgrade-btn";
-    btn.dataset.cost = upg.cost;
-    btn.innerHTML = `${upg.name}<br><small>+${upg.amount} per click</small><br>Cost: ${upg.cost}`;
-    btn.onclick = () => {
-      if (nerds < upg.cost) return;
-      nerds -= upg.cost;
-      nerdsPerClick += upg.amount;
-      updateUI();
-    };
-    clickDiv.appendChild(btn);
-  });
-
-  autoUpgrades.forEach(upg => {
-    const btn = document.createElement("button");
-    btn.className = "upgrade-btn";
-    btn.dataset.cost = upg.cost;
-    btn.innerHTML = `${upg.name}<br><small>+${upg.amount} nerds/sec</small><br>Cost: ${upg.cost}`;
-    btn.onclick = () => {
-      if (nerds < upg.cost) return;
-      nerds -= upg.cost;
-      nerdsPerSecond += upg.amount;
-      updateUI();
-    };
-    autoDiv.appendChild(btn);
-  });
-}
-
-function buildSkinShop() {
-  skinShopDiv.innerHTML = "";
-  skins.forEach(skin => {
-    if (!purchasedSkins.includes(skin.img)) {
-      const btn = document.createElement("button");
-      btn.className = "skin-btn";
-      btn.dataset.img = skin.img;
-      btn.dataset.cost = skin.cost;
-      btn.innerHTML = `${skin.name}<br>Cost: ${skin.cost}`;
-      btn.onclick = () => {
-        if (nerds < skin.cost) return;
-        nerds -= skin.cost;
-        purchasedSkins.push(skin.img);
-        equippedSkin = skin.img;
-        updateUI();
-      };
-      skinShopDiv.appendChild(btn);
+function checkAchievements(){
+  achievements.forEach(a=>{
+    if(!unlockedAchievements.includes(a.id)&&a.check()){
+      unlockedAchievements.push(a.id);
+      showPopup(a.text);
     }
   });
 }
 
-function buildSkinLocker() {
-  skinLockerDiv.innerHTML = "";
-  purchasedSkins.forEach(img => {
-    const skin = skins.find(s => s.img === img);
-    const btn = document.createElement("button");
-    btn.innerHTML = `Equip ${skin.name}`;
-    btn.onclick = () => { equippedSkin = skin.img; updateUI(); };
-    skinLockerDiv.appendChild(btn);
+function buildAchievements(){
+  const list=document.getElementById("achievementList");
+  list.innerHTML="";
+  achievements.forEach(a=>{
+    const d=document.createElement("div");
+    d.className="achievement "+(unlockedAchievements.includes(a.id)?"unlocked":"");
+    d.textContent=(unlockedAchievements.includes(a.id)?"✔ ":"🔒 ")+a.text;
+    list.appendChild(d);
   });
 }
 
-// Tabs
-const tabButtons = document.querySelectorAll(".tab-btn");
-const tabContents = document.querySelectorAll(".tab-content");
-tabButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    tabButtons.forEach(b => b.classList.remove("active"));
-    tabContents.forEach(c => c.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById(btn.dataset.tab).classList.add("active");
+function buildUpgrades(){
+  clickUpgrades.forEach(u=>{
+    const b=document.createElement("button");
+    b.textContent=`${u.name} (+${u.amount}/click) Cost:${u.cost}`;
+    b.onclick=()=>{ if(nerds>=u.cost){ nerds-=u.cost; nerdsPerClick+=u.amount; updateUI(); }};
+    document.getElementById("clickUpgrades").appendChild(b);
   });
+  autoUpgrades.forEach(u=>{
+    const b=document.createElement("button");
+    b.textContent=`${u.name} (+${u.amount}/sec) Cost:${u.cost}`;
+    b.onclick=()=>{ if(nerds>=u.cost){ nerds-=u.cost; nerdsPerSecond+=u.amount; updateUI(); }};
+    document.getElementById("autoUpgrades").appendChild(b);
+  });
+}
+
+function buildSkins(){
+  const shop=document.getElementById("skinShop");
+  const locker=document.getElementById("skinLocker");
+  shop.innerHTML=""; locker.innerHTML="";
+  skins.forEach(s=>{
+    if(!purchasedSkins.includes(s.img)){
+      const b=document.createElement("button");
+      b.textContent=`${s.name} - ${s.cost}`;
+      b.onclick=()=>{ if(nerds>=s.cost){ nerds-=s.cost; purchasedSkins.push(s.img); equippedSkin=s.img; updateUI(); }};
+      shop.appendChild(b);
+    }
+  });
+  purchasedSkins.forEach(img=>{
+    const s=skins.find(x=>x.img===img);
+    const b=document.createElement("button");
+    b.textContent=`Equip ${s.name}`;
+    b.onclick=()=>{ equippedSkin=s.img; updateUI(); };
+    locker.appendChild(b);
+  });
+}
+
+function saveGame(){
+  localStorage.setItem("plesNerd2Save",JSON.stringify({
+    nerds,nerdsPerClick,nerdsPerSecond,totalEarned,
+    equippedSkin,purchasedSkins,unlockedAchievements
+  }));
+}
+
+function loadGame(){
+  const s=JSON.parse(localStorage.getItem("plesNerd2Save"));
+  if(!s) return;
+  Object.assign(window,s);
+}
+
+function updateUI(){
+  nerdsSpan.textContent=Math.floor(nerds);
+  rateSpan.textContent=nerdsPerSecond;
+  const r=getRank();
+  rankDiv.innerHTML=`<div class="badge ${r.cls}"></div>${r.name}`;
+  document.getElementById("nerdImage").src=equippedSkin;
+  checkAchievements();
+  buildAchievements();
+  buildSkins();
+  saveGame();
+}
+
+document.getElementById("nerdImage").onclick=()=>{
+  nerds+=nerdsPerClick;
+  totalEarned+=nerdsPerClick;
+  updateUI();
+};
+
+setInterval(()=>{
+  nerds+=nerdsPerSecond;
+  totalEarned+=nerdsPerSecond;
+  updateUI();
+},1000);
+
+document.querySelectorAll(".tab-btn").forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    document.getElementById(b.dataset.tab).classList.add("active");
+  };
 });
 
-// Main Click
-nerdImage.onclick = () => { nerds += nerdsPerClick; if(navigator.vibrate) navigator.vibrate(10); updateUI(); };
-
-// Game Loop
-setInterval(() => { nerds += nerdsPerSecond; updateUI(); }, 1000);
-
-// Init
 loadGame();
 buildUpgrades();
-buildSkinShop();
 updateUI();
 </script>
 </body>
