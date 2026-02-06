@@ -31,8 +31,11 @@ h2 { margin-top:22px; font-size:0.75rem; text-shadow:1px 1px #000; }
 .badge.platinum { background:#7fffd4; }
 .badge.diamond { background:#4fc3f7; }
 .badge.elite { background:#e91e63; }
-.badge.champion { background:#9c27b0; }
-.badge.unreal { background:#ff5722; }
+.badge.champion { background:#ff5722; }
+.badge.unreal { background:#9c27b0; }
+.badge.legendary { background:#ff9800; }
+.badge.mythic { background:linear-gradient(45deg,#ff1744,#7c4dff,#00e5ff); }
+
 
 #nerdImage { width:min(70vw,240px); cursor:pointer; image-rendering:pixelated; }
 #nerdImage:active { transform:scale(0.92); }
@@ -143,6 +146,17 @@ let purchasedSkins=["nerd.png"];
 let unlockedAchievements=[];
 
 /* UPGRADES */
+function unlockRankSkins() {
+  // Only logic: unlock rank-based skins
+  for (let i = 0; i < skins.length; i++) {
+    const s = skins[i];
+    if (s.unlockAt && totalEarned >= s.unlockAt && !purchasedSkins.includes(s.img)) {
+      purchasedSkins.push(s.img);
+      showPopup(s.name + " unlocked!");
+    }
+  }
+}
+
 const clickUpgrades=[{name:"better click",cost:10,amount:1}];
 
 const autoUpgrades=[
@@ -166,7 +180,6 @@ const autoUpgrades=[
   {name:"multiverse of nerd",amount:200000000,cost:15000000000}
 ];
 
-
 /* SKINS */
 const skins=[
   {name:"nerd",img:"nerd.png",cost:0},
@@ -177,19 +190,22 @@ const skins=[
   {name:"blue nerd",img:"blue.png",cost:5000},
   {name:"purple nerd",img:"purple.png",cost:5000},
   {name:"angel nerd",img:"heaven.png",cost:100000},
-  {name:"dapper nerd",img:"dapper.png",cost:1000000}
+  {name:"dapper nerd",img:"dapper.png",cost:1000000},
+  {name:"unreal nerd", img:"unreal.png", cost:0, unlockAt:1_000_000_000 }
 ];
 
 /* RANKS */
-const ranks=[
-  {name:"Bronze",req:0,cls:"bronze"},
-  {name:"Silver",req:1000,cls:"silver"},
-  {name:"Gold",req:10000,cls:"gold"},
-  {name:"Platinum",req:100000,cls:"platinum"},
-  {name:"Diamond",req:1000000,cls:"diamond"},
-  {name:"Elite",req:10000000,cls:"elite"},
-  {name:"Champion",req:100000000,cls:"champion"},
-  {name:"Unreal",req:1000000000,cls:"unreal"}
+const ranks = [
+  { name: "Bronze", req: 0, cls: "bronze" },
+  { name: "Silver", req: 1000, cls: "silver" },
+  { name: "Gold", req: 10000, cls: "gold" },
+  { name: "Platinum", req: 100000, cls: "platinum" },
+  { name: "Diamond", req: 1000000, cls: "diamond" },
+  { name: "Elite", req: 10000000, cls: "elite" },
+  { name: "Champion", req: 100000000, cls: "champion" },
+  { name: "Unreal", req: 1000000000, cls: "unreal" },
+  { name: "Legendary", req: 10000000000, cls: "legendary" },
+  { name: "Mythic", req: 100000000000, cls: "mythic" }
 ];
 
 /* ACHIEVEMENTS */
@@ -200,8 +216,9 @@ const achievements=[
   {id:"500k",text:"500,000 Nerds",check:()=>totalEarned>=500000},
   {id:"auto",text:"First Auto Upgrade",check:()=>nerdsPerSecond>0},
   {id:"skin",text:"Buy a Skin",check:()=>purchasedSkins.length>1},
-  {id:"million",text:"1,000,000 Nerds",check:()=>totalEarned>=1_000_000},
-  {id:"unreal",text:"Reach Unreal",check:()=>totalEarned>=1_000_000_000}
+  {id:"million",text:"1,000,000 Nerds",check:()=>totalEarned>=1000000},
+  {id:"unreal",text:"Reach Unreal",check:()=>totalEarned>=1000000000},
+  {id:"mythic",text:"Reach Mythic",check:()=>totalEarned>=100000000000}
 ];
 
 const nerdsSpan=document.getElementById("nerds");
@@ -266,27 +283,38 @@ function buildUpgrades(){
   });
 }
 
-function buildSkins(){
-  const shop=document.getElementById("skinShop");
-  const locker=document.getElementById("skinLocker");
-  shop.innerHTML="";
-  locker.innerHTML="";
-
-  skins.forEach(s=>{
-    if(!purchasedSkins.includes(s.img)){
-      const b=document.createElement("button");
-      b.textContent=`${s.name} - ${s.cost}`;
-      b.disabled=nerds<s.cost;
-      b.onclick=()=>{ nerds-=s.cost; purchasedSkins.push(s.img); equippedSkin=s.img; updateUI(); };
+function buildSkins() {
+  const shop = document.getElementById("skinShop");
+  const locker = document.getElementById("skinLocker");
+  
+  shop.innerHTML = "";
+  locker.innerHTML = "";
+  
+  // SHOP
+  for (let i = 0; i < skins.length; i++) {
+    const s = skins[i];
+    if (s.unlockAt && totalEarned < s.unlockAt) continue;
+    if (!purchasedSkins.includes(s.img)) {
+      const b = document.createElement("button");
+      b.textContent = s.unlockAt ? s.name + " (Unlocked by Rank)" : s.name + " - " + s.cost;
+      b.disabled = nerds < s.cost;
+      b.onclick = function() {
+        nerds -= s.cost;
+        purchasedSkins.push(s.img);
+        equippedSkin = s.img;
+        updateUI();
+      };
       shop.appendChild(b);
     }
-  });
+  }
 
+  // LOCKER
   purchasedSkins.forEach(img=>{
-    const s=skins.find(x=>x.img===img);
-    const b=document.createElement("button");
-    b.textContent=`Equip ${s.name}`;
-    b.onclick=()=>{ equippedSkin=s.img; updateUI(); };
+    const s = skins.find(x=>x.img===img);
+    if (!s) return;
+    const b = document.createElement("button");
+    b.textContent = equippedSkin===s.img ? `✔ ${s.name} (Equipped)` : `Equip ${s.name}`;
+    b.onclick = ()=>{ equippedSkin=s.img; updateUI(); };
     locker.appendChild(b);
   });
 }
@@ -316,16 +344,22 @@ function loadGame(){
   unlockedAchievements = s.unlockedAchievements ?? unlockedAchievements;
 }
 
-function updateUI(){
-  nerdsSpan.textContent=Math.floor(nerds);
-  rateSpan.textContent=nerdsPerSecond;
-  const r=getRank();
-  rankDiv.innerHTML=`<div class="badge ${r.cls}"></div>${r.name}`;
-  document.getElementById("nerdImage").src=equippedSkin;
+function updateUI() {
+  nerdsSpan.textContent = Math.floor(nerds);
+  rateSpan.textContent = nerdsPerSecond;
+  
+  const r = getRank();
+  rankDiv.innerHTML = `<div class="badge ${r.cls}"></div>${r.name}`;
+  
+  document.getElementById("nerdImage").src = equippedSkin;
+  
   checkAchievements();
   buildAchievements();
   buildUpgrades();
+  
+  unlockRankSkins(); // ⭐ unlock Unreal skin
   buildSkins();
+  
   saveGame();
 }
 
