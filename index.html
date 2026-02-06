@@ -175,7 +175,9 @@ const skins=[
   {name:"yellow nerd",img:"yellow.png",cost:5000},
   {name:"green nerd",img:"green.png",cost:5000},
   {name:"blue nerd",img:"blue.png",cost:5000},
-  {name:"purple nerd",img:"purple.png",cost:5000}
+  {name:"purple nerd",img:"purple.png",cost:5000},
+  {name:"angel nerd",img:"heaven.png",cost:100000},
+  {name:"dapper nerd",img:"dapper.png",cost:1000000}
 ];
 
 /* RANKS */
@@ -195,9 +197,11 @@ const achievements=[
   {id:"first",text:"First Click",check:()=>totalEarned>=1},
   {id:"100",text:"100 Nerds",check:()=>totalEarned>=100},
   {id:"1k",text:"1,000 Nerds",check:()=>totalEarned>=1000},
+  {id:"500k",text:"500,000 Nerds",check:()=>totalEarned>=500000},
   {id:"auto",text:"First Auto Upgrade",check:()=>nerdsPerSecond>0},
   {id:"skin",text:"Buy a Skin",check:()=>purchasedSkins.length>1},
-  {id:"million",text:"1,000,000 Nerds",check:()=>totalEarned>=1_000_000}
+  {id:"million",text:"1,000,000 Nerds",check:()=>totalEarned>=1_000_000},
+  {id:"unreal",text:"Reach Unreal",check:()=>totalEarned>=1_000_000_000}
 ];
 
 const nerdsSpan=document.getElementById("nerds");
