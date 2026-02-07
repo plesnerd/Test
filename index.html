@@ -139,16 +139,60 @@ button:disabled {
 </div>
 
 <div id="popup"></div>
+
+<h2>promo codes</h2>
+<div class="upgrade-section">
+  <input id="promoInput" placeholder="enter code"
+    style="width:95%;max-width:340px;padding:10px;font-size:0.55rem;border:4px solid #000;">
+  <button id="promoBtn">Redeem</button>
+</div>
 <h6>made by bluebaystudios 👻</h6>
 <script>
 let nerds=0, nerdsPerClick=1, nerdsPerSecond=0, totalEarned=0;
 let equippedSkin="nerd.png";
 let purchasedSkins=["nerd.png"];
 let unlockedAchievements=[];
+let usedPromoCodes = [];
 
-/* UPGRADES */
+/* PROMO CODES */
+const promoCodes = {
+  "21326": {
+    reward: "+21326 nerds",
+    apply: () => {
+      nerds += 21326;
+      totalEarned += 21326;
+    }
+  },
+  "COPYCAT": {
+    reward: "+1 nerd",
+    apply: () => {
+      nerds += 1;
+      totalEarned += 1;
+    }
+  },
+  "JACOBWASNTHERE": {
+    reward: "+10 nerd/sec",
+    apply: () => {
+      nerdsPerSecond += 10;
+    }
+  },
+  "BLUEBAY00": {
+    reward: "+50 nerds/click",
+    apply: () => {
+      nerdsPerClick += 50;
+    }
+  },
+"HUSHLITTLEBOY": {
+  reward: "hushlittleboy skin",
+  reusable: true,
+  apply: () => {
+equippedSkin = "hush.png";
+  }
+}
+};
+
+/* UNLOCK RANK SKINS — FIXED */
 function unlockRankSkins() {
-  // Only logic: unlock rank-based skins
   for (let i = 0; i < skins.length; i++) {
     const s = skins[i];
     if (s.unlockAt && totalEarned >= s.unlockAt && !purchasedSkins.includes(s.img)) {
@@ -228,19 +272,21 @@ const achievements=[
   {id:"mythic",text:"Reach Mythic",check:()=>totalEarned>=100000000000}
 ];
 
+
+
 const nerdsSpan=document.getElementById("nerds");
 const rateSpan=document.getElementById("rate");
 const rankDiv=document.getElementById("rank");
 const popup=document.getElementById("popup");
 
-function showPopup(text){
-  popup.textContent="Achievement Unlocked: "+text;
-  popup.style.display="block";
+function showPopup(text) {
+  popup.textContent = text;
+  popup.style.display = "block";
   popup.classList.add("show");
-  setTimeout(()=>{
+  setTimeout(() => {
     popup.classList.remove("show");
-    popup.style.display="none";
-  },2500);
+    popup.style.display = "none";
+  }, 2500);
 }
 
 function getRank(){
@@ -251,7 +297,7 @@ function checkAchievements(){
   achievements.forEach(a=>{
     if(!unlockedAchievements.includes(a.id)&&a.check()){
       unlockedAchievements.push(a.id);
-      showPopup(a.text);
+      showPopup("Achievement Unlocked: " + a.text);
     }
   });
 }
@@ -327,15 +373,16 @@ function buildSkins() {
 }
 
 function saveGame(){
-  localStorage.setItem("plesNerd2Save",JSON.stringify({
-    nerds,
-    nerdsPerClick,
-    nerdsPerSecond,
-    totalEarned,
-    equippedSkin,
-    purchasedSkins,
-    unlockedAchievements
-  }));
+  localStorage.setItem("plesNerd2Save", JSON.stringify({
+  nerds,
+  nerdsPerClick,
+  nerdsPerSecond,
+  totalEarned,
+  equippedSkin,
+  purchasedSkins,
+  unlockedAchievements,
+  usedPromoCodes
+}));
 }
 
 function loadGame(){
@@ -348,6 +395,7 @@ function loadGame(){
   totalEarned = s.totalEarned ?? totalEarned;
   equippedSkin = s.equippedSkin ?? equippedSkin;
   purchasedSkins = s.purchasedSkins ?? purchasedSkins;
+  usedPromoCodes = s.usedPromoCodes ?? usedPromoCodes;
   unlockedAchievements = s.unlockedAchievements ?? unlockedAchievements;
 }
 
@@ -381,6 +429,31 @@ setInterval(()=>{
   totalEarned+=nerdsPerSecond;
   updateUI();
 },1000);
+
+
+document.getElementById("promoBtn").onclick = () => {
+  const input = document.getElementById("promoInput");
+  const code = input.value.trim().toUpperCase();
+  
+  if (!promoCodes[code]) {
+    showPopup("Invalid code ❌");
+    return;
+  }
+  
+  if (!promoCodes[code].reusable && usedPromoCodes.includes(code)) {
+  showPopup("Code already used ⚠️");
+  return;
+}
+  
+  promoCodes[code].apply();
+  if (!promoCodes[code].reusable) {
+  usedPromoCodes.push(code);
+}
+  input.value = "";
+  
+  showPopup("Code redeemed: " + promoCodes[code].reward);
+  updateUI();
+};
 
 document.querySelectorAll(".tab-btn").forEach(b=>{
   b.onclick=()=>{
