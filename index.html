@@ -3,32 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <title>ples nerd 2</title>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#00a1d8">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
 <style>
 * { box-sizing:border-box; user-select:none; font-family:'Press Start 2P', monospace; }
-body { margin:0; padding:10px; background:#00a1d8; color:white; text-align:center; 
-
-background-image: url('bg.png');
-
-}
-
+body { margin:0; padding:10px; background:#00a1d8; color:white; text-align:center; background-image: url('bg.png'); }
 h1 { margin:12px 0; font-size:1.6rem; color:#e63b7a; text-shadow:2px 2px #000; }
 h2 { margin-top:22px; font-size:0.75rem; text-shadow:1px 1px #000; }
-
 #counter { font-size:0.7rem; margin-bottom:10px; line-height:1.6; text-shadow:1px 1px #000; }
 #rank { margin-top:6px; display:flex; justify-content:center; align-items:center; gap:6px; }
-
-.badge {
-  width:14px; height:14px;
-  border:3px solid #000;
-}
+.badge { width:14px; height:14px; border:3px solid #000;}
 .badge.bronze { background:#cd7f32; }
 .badge.silver { background:#c0c0c0; }
 .badge.gold { background:#ffd700; }
@@ -39,134 +26,65 @@ h2 { margin-top:22px; font-size:0.75rem; text-shadow:1px 1px #000; }
 .badge.unreal { background:#9c27b0; }
 .badge.legendary { background:#ff9800; }
 .badge.mythic { background:linear-gradient(45deg,#ff1744,#7c4dff,#00e5ff); }
-
-
 #nerdImage { width:min(70vw,240px); cursor:pointer; image-rendering:pixelated; }
 #nerdImage:active { transform:scale(0.92); }
-
 .upgrade-section { margin-top:12px; display:flex; flex-direction:column; gap:10px; align-items:center; }
-
-button {
-  width:95%; max-width:340px;
-  background:#e63b7a;
-  border:4px solid #000;
-  color:white;
-  padding:12px;
-  font-size:0.55rem;
-  box-shadow:4px 4px #000;
-  cursor:pointer;
-}
+button { width:95%; max-width:340px; background:#e63b7a; border:4px solid #000; color:white; padding:12px; font-size:0.55rem; box-shadow:4px 4px #000; cursor:pointer; }
 button:active { transform:translate(4px,4px); box-shadow:none; }
-button:disabled {
-  background:#555;
-  opacity:0.6;
-  cursor:not-allowed;
-  box-shadow:none;
-}
-
+button:disabled { background:#555; opacity:0.6; cursor:not-allowed; box-shadow:none; }
 .tabs { display:flex; justify-content:center; gap:6px; margin-top:18px; flex-wrap:wrap; }
-.tab-btn { padding:8px; font-size:0.5rem; border:4px solid #000; background:#e63b7a; box-shadow:4px 4px #000; }
+.tab-btn { padding:8px; font-size:0.5rem; border:4px solid #000; background:#e63b7a; box-shadow:4px 4px #000; width:auto; max-width:none; padding:8px 10px; white-space:nowrap; }
 .tab-btn.active { background:#ff75a0; }
-.tab-btn {
-  width:auto;
-  max-width:none;
-  padding:8px 10px;
-  white-space:nowrap;
-}
-
 .tab-content { display:none; margin-top:15px; }
 .tab-content.active { display:block; }
-
-.achievement {
-  border:3px solid #000;
-  background:#111;
-  padding:8px;
-  width:95%;
-  max-width:340px;
-  font-size:0.5rem;
-}
+.achievement { border:3px solid #000; background:#111; padding:8px; width:95%; max-width:340px; font-size:0.5rem; }
 .achievement.unlocked { background:#2ecc71; color:#000; }
-
-#popup {
-  position:fixed;
-  top:20px;
-  left:50%;
-  transform:translateX(-50%) translateY(-150%);
-  background:#2ecc71;
-  color:#000;
-  border:4px solid #000;
-  padding:12px;
-  font-size:0.55rem;
-  box-shadow:6px 6px #000;
-  z-index:999;
-  display:none;
-  transition:transform 0.4s ease;
-}
-#popup.show {
-  display:block;
-  transform:translateX(-50%) translateY(0);
-}
+#popup { position:fixed; top:20px; left:50%; transform:translateX(-50%) translateY(-150%); background:#2ecc71; color:#000; border:4px solid #000; padding:12px; font-size:0.55rem; box-shadow:6px 6px #000; z-index:999; display:none; transition:transform 0.4s ease; }
+#popup.show { display:block; transform:translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
-
 <h1>ples nerd 2</h1>
-
 <div id="counter">
   nerds: <span id="nerds">0</span><br>
   <small><span id="rate">0</span> nerd/sec</small>
   <div id="rank"></div>
 </div>
-
 <img id="nerdImage" src="nerd.png">
-
 <h2>click upgrades</h2>
 <div id="clickUpgrades" class="upgrade-section"></div>
-
 <h2>auto upgrades</h2>
 <div id="autoUpgrades" class="upgrade-section"></div>
-
 <div class="tabs">
   <div class="tab-btn active" data-tab="shop">Shop</div>
   <div class="tab-btn" data-tab="skins">Skins</div>
   <div class="tab-btn" data-tab="achievements">Achievements</div>
   <div class="tab-btn" data-tab="mines">Mines</div>
 </div>
-
 <div id="shop" class="tab-content active">
   <h2>Skin Shop</h2>
   <div id="skinShop" class="upgrade-section"></div>
- 
 </div>
-
 <div id="skins" class="tab-content">
   <h2>Skin Locker</h2>
   <div id="skinLocker" class="upgrade-section"></div>
 </div>
-
 <div id="achievements" class="tab-content">
   <h2>Achievements</h2>
   <div id="achievementList" class="upgrade-section"></div>
 </div>
-
 <div id="popup"></div>
-
 <div id="mines" class="tab-content">
   <h2>Mines</h2>
-
   <div class="upgrade-section">
     <input id="mineBet" type="number" min="1" placeholder="Bet nerds"
       style="width:95%;max-width:340px;padding:10px;font-size:0.55rem;border:4px solid #000;">
-    
     <input id="mineCount" type="number" min="1" max="24" value="3"
       style="width:95%;max-width:340px;padding:10px;font-size:0.55rem;border:4px solid #000;">
-
     <button onclick="startMines()">Start Game</button>
     <button onclick="cashOutMines()">Cash Out</button>
-
     <div id="mineInfo" style="font-size:0.55rem;margin-top:6px;"></div>
   </div>
-
   <div id="mineGrid" style="
     display:grid;
     grid-template-columns:repeat(5, 1fr);
@@ -175,7 +93,6 @@ button:disabled {
     margin:12px auto;
   "></div>
 </div>
-
 <h2>promo codes</h2>
 <div class="upgrade-section">
   <input id="promoInput" placeholder="enter code"
@@ -194,44 +111,14 @@ let mineTiles = [];
 let mineBet = 0;
 let mineMultiplier = 1;
 let safeClicks = 0;
-
 /* PROMO CODES */
 const promoCodes = {
-  "21326": {
-    reward: "+21326 nerds",
-    apply: () => {
-      nerds += 21326;
-      totalEarned += 21326;
-    }
-  },
-  "COPYCAT": {
-    reward: "+1 nerd",
-    apply: () => {
-      nerds += 1;
-      totalEarned += 1;
-    }
-  },
-  "JACOBWASNTHERE": {
-    reward: "+10 nerd/sec",
-    apply: () => {
-      nerdsPerSecond += 10;
-    }
-  },
-  "BLUEBAY00": {
-    reward: "+50 nerds/click",
-    apply: () => {
-      nerdsPerClick += 50;
-    }
-  },
-"HUSHLITTLEBOY": {
-  reward: "hushlittleboy skin",
-  reusable: true,
-  apply: () => {
-equippedSkin = "hush.png";
-  }
-}
+  "21326": { reward: "+21326 nerds", apply: () => { nerds += 21326; totalEarned += 21326; } },
+  "COPYCAT": { reward: "+1 nerd", apply: () => { nerds += 1; totalEarned += 1; } },
+  "JACOBWASNTHERE": { reward: "+10 nerd/sec", apply: () => { nerdsPerSecond += 10; } },
+  "BLUEBAY00": { reward: "+50 nerds/click", apply: () => { nerdsPerClick += 50; } },
+  "HUSHLITTLEBOY": { reward: "hushlittleboy skin", reusable: true, apply: () => { equippedSkin = "hush.png"; } }
 };
-
 /* UNLOCK RANK SKINS — FIXED */
 function unlockRankSkins() {
   for (let i = 0; i < skins.length; i++) {
@@ -242,9 +129,7 @@ function unlockRankSkins() {
     }
   }
 }
-
 const clickUpgrades=[{name:"better click",cost:10,amount:1}];
-
 const autoUpgrades=[
   {name:"handful of nerd",amount:2,cost:50},
   {name:"box of nerd",amount:10,cost:200},
@@ -265,7 +150,6 @@ const autoUpgrades=[
   {name:"universe of nerd",amount:50000000,cost:5000000000},
   {name:"multiverse of nerd",amount:200000000,cost:15000000000}
 ];
-
 /* SKINS */
 const skins=[
   {name:"nerd",img:"nerd.png",cost:0},
@@ -285,7 +169,6 @@ const skins=[
   {name:"pipsqueak nerd",img:"truenerd.png",cost:10000000},
   {name:"unreal nerd", img:"unreal.png", cost:0, unlockAt:1_000_000_000 }
 ];
-
 /* RANKS */
 const ranks = [
   { name: "Bronze", req: 0, cls: "bronze" },
@@ -299,7 +182,6 @@ const ranks = [
   { name: "Legendary", req: 10000000000, cls: "legendary" },
   { name: "Mythic", req: 100000000000, cls: "mythic" }
 ];
-
 /* ACHIEVEMENTS */
 const achievements=[
   {id:"first",text:"First Click",check:()=>totalEarned>=1},
@@ -312,14 +194,10 @@ const achievements=[
   {id:"unreal",text:"Reach Unreal",check:()=>totalEarned>=1000000000},
   {id:"mythic",text:"Reach Mythic",check:()=>totalEarned>=100000000000}
 ];
-
-
-
 const nerdsSpan=document.getElementById("nerds");
 const rateSpan=document.getElementById("rate");
 const rankDiv=document.getElementById("rank");
 const popup=document.getElementById("popup");
-
 function showPopup(text) {
   popup.textContent = text;
   popup.style.display = "block";
@@ -329,11 +207,9 @@ function showPopup(text) {
     popup.style.display = "none";
   }, 2500);
 }
-
 function getRank(){
   return ranks.slice().reverse().find(r=>totalEarned>=r.req);
 }
-
 function checkAchievements(){
   achievements.forEach(a=>{
     if(!unlockedAchievements.includes(a.id)&&a.check()){
@@ -342,7 +218,6 @@ function checkAchievements(){
     }
   });
 }
-
 function buildAchievements(){
   const list=document.getElementById("achievementList");
   list.innerHTML="";
@@ -353,13 +228,11 @@ function buildAchievements(){
     list.appendChild(d);
   });
 }
-
 function buildUpgrades(){
   const clickDiv=document.getElementById("clickUpgrades");
   const autoDiv=document.getElementById("autoUpgrades");
   clickDiv.innerHTML="";
   autoDiv.innerHTML="";
-
   clickUpgrades.forEach(u=>{
     const b=document.createElement("button");
     b.textContent=`${u.name} (+${u.amount}/click) Cost: ${u.cost}`;
@@ -367,7 +240,6 @@ function buildUpgrades(){
     b.onclick=()=>{ nerds-=u.cost; nerdsPerClick+=u.amount; updateUI(); };
     clickDiv.appendChild(b);
   });
-
   autoUpgrades.forEach(u=>{
     const b=document.createElement("button");
     b.textContent=`${u.name} (+${u.amount}/sec) Cost: ${u.cost}`;
@@ -376,15 +248,11 @@ function buildUpgrades(){
     autoDiv.appendChild(b);
   });
 }
-
 function buildSkins() {
   const shop = document.getElementById("skinShop");
   const locker = document.getElementById("skinLocker");
-  
   shop.innerHTML = "";
   locker.innerHTML = "";
-  
-  // SHOP
   for (let i = 0; i < skins.length; i++) {
     const s = skins[i];
     if (s.unlockAt && totalEarned < s.unlockAt) continue;
@@ -401,8 +269,6 @@ function buildSkins() {
       shop.appendChild(b);
     }
   }
-
-  // LOCKER
   purchasedSkins.forEach(img=>{
     const s = skins.find(x=>x.img===img);
     if (!s) return;
@@ -412,30 +278,36 @@ function buildSkins() {
     locker.appendChild(b);
   });
 }
-
 function saveGame(){
   localStorage.setItem("plesNerd2Save", JSON.stringify({
-  nerds,
-  nerdsPerClick,
-  nerdsPerSecond,
-  totalEarned,
-  equippedSkin,
-  purchasedSkins,
-  unlockedAchievements,
-  usedPromoCodes
-}));
+    nerds,
+    nerdsPerClick,
+    nerdsPerSecond,
+    totalEarned,
+    equippedSkin,
+    purchasedSkins,
+    unlockedAchievements,
+    usedPromoCodes
+  }));
 }
-
+// --- START MODIFIED CODE ---
 function startMines() {
   const bet = parseInt(document.getElementById("mineBet").value);
-  const mineCount = parseInt(document.getElementById("mineCount").value);
+  const mineCountInput = document.getElementById("mineCount");
+  const mineCountValue = mineCountInput.value;
+  const mineCount = parseInt(mineCountValue, 10);
 
   if (!bet || bet <= 0 || bet > nerds) {
     showPopup("you dont have that much broke boi 😂❌");
     return;
   }
-
-  if (mineCount < 1 || mineCount >= 25) {
+  // new stricter validation to disallow blanks, NaN, <1, >24
+  if (
+    !mineCountValue ||
+    isNaN(mineCount) ||
+    mineCount < 1 ||
+    mineCount > 24
+  ) {
     showPopup("invalid mine count ❌");
     return;
   }
@@ -445,7 +317,6 @@ function startMines() {
   mineMultiplier = 1;
   safeClicks = 0;
   minesActive = true;
-
   mineTiles = Array(25).fill("safe");
   let placed = 0;
   while (placed < mineCount) {
@@ -455,30 +326,25 @@ function startMines() {
       placed++;
     }
   }
-
   buildMineGrid();
   updateMineInfo();
   updateUI();
 }
-
+// --- END MODIFIED CODE ---
 function buildMineGrid() {
   const grid = document.getElementById("mineGrid");
   grid.innerHTML = "";
-
   for (let i = 0; i < 25; i++) {
     const b = document.createElement("button");
     b.style.height = "48px";
     b.style.fontSize = "0.7rem";
     b.textContent = "❓";
-
     b.onclick = () => clickMine(i, b);
     grid.appendChild(b);
   }
 }
-
 function clickMine(i, btn) {
   if (!minesActive || btn.disabled) return;
-
   if (mineTiles[i] === "mine") {
     btn.textContent = "💣";
     showPopup(" 💥 you lost");
@@ -491,7 +357,6 @@ function clickMine(i, btn) {
     updateMineInfo();
   }
 }
-
 function cashOutMines() {
   if (!minesActive) return;
   const win = Math.floor(mineBet * mineMultiplier);
@@ -500,22 +365,18 @@ function cashOutMines() {
   endMines(true);
   updateUI();
 }
-
 function endMines() {
   minesActive = false;
   mineTiles = [];
   document.getElementById("mineGrid").innerHTML = "";
   updateMineInfo();
 }
-
 function updateMineInfo() {
   document.getElementById("mineInfo").textContent =
     minesActive
       ? `Bet: ${mineBet} | Multiplier: x${mineMultiplier.toFixed(2)}`
       : "No active game";
 }
-
-  
 function loadGame(){
   const data = localStorage.getItem("plesNerd2Save");
   if(!data) return;
@@ -529,63 +390,48 @@ function loadGame(){
   usedPromoCodes = s.usedPromoCodes ?? usedPromoCodes;
   unlockedAchievements = s.unlockedAchievements ?? unlockedAchievements;
 }
-
 function updateUI() {
   nerdsSpan.textContent = Math.floor(nerds);
   rateSpan.textContent = nerdsPerSecond;
-  
   const r = getRank();
   rankDiv.innerHTML = `<div class="badge ${r.cls}"></div>${r.name}`;
-  
   document.getElementById("nerdImage").src = equippedSkin;
-  
   checkAchievements();
   buildAchievements();
   buildUpgrades();
-  
   unlockRankSkins(); // ⭐ unlock Unreal skin
   buildSkins();
-  
   saveGame();
 }
-
 document.getElementById("nerdImage").onclick=()=>{
   nerds+=nerdsPerClick;
   totalEarned+=nerdsPerClick;
   updateUI();
 };
-
 setInterval(()=>{
   nerds+=nerdsPerSecond;
   totalEarned+=nerdsPerSecond;
   updateUI();
 },1000);
-
-
 document.getElementById("promoBtn").onclick = () => {
   const input = document.getElementById("promoInput");
   const code = input.value.trim().toUpperCase();
-  
   if (!promoCodes[code]) {
     showPopup("Invalid code ❌");
     return;
   }
-  
   if (!promoCodes[code].reusable && usedPromoCodes.includes(code)) {
-  showPopup("Code already used ⚠️");
-  return;
-}
-  
+    showPopup("Code already used ⚠️");
+    return;
+  }
   promoCodes[code].apply();
   if (!promoCodes[code].reusable) {
-  usedPromoCodes.push(code);
-}
+    usedPromoCodes.push(code);
+  }
   input.value = "";
-  
   showPopup("Code redeemed: " + promoCodes[code].reward);
   updateUI();
 };
-
 document.querySelectorAll(".tab-btn").forEach(b=>{
   b.onclick=()=>{
     document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));
@@ -594,9 +440,19 @@ document.querySelectorAll(".tab-btn").forEach(b=>{
     document.getElementById(b.dataset.tab).classList.add("active");
   };
 });
-
 loadGame();
 updateUI();
+// ▼▼▼ Add this at end for live filtering/blocking spaces/non-number input for mineCount ▼▼▼
+const mineCountInput = document.getElementById("mineCount");
+mineCountInput.addEventListener("input", function() {
+  // Remove any non-digit input and prevent spaces
+  this.value = this.value.replace(/[^0-9]/g, '');
+  // Clamp to [1,24]
+  if (this.value !== "") {
+    let n = Math.max(1, Math.min(24, parseInt(this.value, 10)));
+    this.value = n;
+  }
+});
 </script>
 </body>
 </html>
