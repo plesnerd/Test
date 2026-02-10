@@ -143,6 +143,31 @@ button:disabled {
 </div>
 
 <div id="popup"></div>
+<div class="tab-btn" data-tab="mines">Mines</div>
+<div id="mines" class="tab-content">
+  <h2>Mines</h2>
+
+  <div class="upgrade-section">
+    <input id="mineBet" type="number" min="1" placeholder="Bet nerds"
+      style="width:95%;max-width:340px;padding:10px;font-size:0.55rem;border:4px solid #000;">
+    
+    <input id="mineCount" type="number" min="1" max="24" value="3"
+      style="width:95%;max-width:340px;padding:10px;font-size:0.55rem;border:4px solid #000;">
+
+    <button onclick="startMines()">Start Game</button>
+    <button onclick="cashOutMines()">Cash Out</button>
+
+    <div id="mineInfo" style="font-size:0.55rem;margin-top:6px;"></div>
+  </div>
+
+  <div id="mineGrid" style="
+    display:grid;
+    grid-template-columns:repeat(5, 1fr);
+    gap:6px;
+    max-width:260px;
+    margin:12px auto;
+  "></div>
+</div>
 
 <h2>promo codes</h2>
 <div class="upgrade-section">
@@ -157,6 +182,11 @@ let equippedSkin="nerd.png";
 let purchasedSkins=["nerd.png"];
 let unlockedAchievements=[];
 let usedPromoCodes = [];
+let minesActive = false;
+let mineTiles = [];
+let mineBet = 0;
+let mineMultiplier = 1;
+let safeClicks = 0;
 
 /* PROMO CODES */
 const promoCodes = {
@@ -389,6 +419,96 @@ function saveGame(){
 }));
 }
 
+function startMines() {
+  const bet = parseInt(document.getElementById("mineBet").value);
+  const mineCount = parseInt(document.getElementById("mineCount").value);
+
+  if (!bet || bet <= 0 || bet > nerds) {
+    showPopup("you dont have that much broke boi 😂❌");
+    return;
+  }
+
+  if (mineCount < 1 || mineCount >= 25) {
+    showPopup("invalid mine count ❌");
+    return;
+  }
+
+  nerds -= bet;
+  mineBet = bet;
+  mineMultiplier = 1;
+  safeClicks = 0;
+  minesActive = true;
+
+  mineTiles = Array(25).fill("safe");
+  let placed = 0;
+  while (placed < mineCount) {
+    const i = Math.floor(Math.random() * 25);
+    if (mineTiles[i] !== "mine") {
+      mineTiles[i] = "mine";
+      placed++;
+    }
+  }
+
+  buildMineGrid();
+  updateMineInfo();
+  updateUI();
+}
+
+function buildMineGrid() {
+  const grid = document.getElementById("mineGrid");
+  grid.innerHTML = "";
+
+  for (let i = 0; i < 25; i++) {
+    const b = document.createElement("button");
+    b.style.height = "48px";
+    b.style.fontSize = "0.7rem";
+    b.textContent = "❓";
+
+    b.onclick = () => clickMine(i, b);
+    grid.appendChild(b);
+  }
+}
+
+function clickMine(i, btn) {
+  if (!minesActive || btn.disabled) return;
+
+  if (mineTiles[i] === "mine") {
+    btn.textContent = "💣";
+    showPopup(" 💥 you lost");
+    endMines(false);
+  } else {
+    btn.textContent = "💎";
+    btn.disabled = true;
+    safeClicks++;
+    mineMultiplier = 1 + safeClicks * 0.25;
+    updateMineInfo();
+  }
+}
+
+function cashOutMines() {
+  if (!minesActive) return;
+  const win = Math.floor(mineBet * mineMultiplier);
+  nerds += win;
+  showPopup("Cashed out +" + win + " nerds 💰");
+  endMines(true);
+  updateUI();
+}
+
+function endMines() {
+  minesActive = false;
+  mineTiles = [];
+  document.getElementById("mineGrid").innerHTML = "";
+  updateMineInfo();
+}
+
+function updateMineInfo() {
+  document.getElementById("mineInfo").textContent =
+    minesActive
+      ? `Bet: ${mineBet} | Multiplier: x${mineMultiplier.toFixed(2)}`
+      : "No active game";
+}
+
+  
 function loadGame(){
   const data = localStorage.getItem("plesNerd2Save");
   if(!data) return;
