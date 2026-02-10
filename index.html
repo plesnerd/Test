@@ -67,6 +67,12 @@ button:disabled {
 .tabs { display:flex; justify-content:center; gap:6px; margin-top:18px; flex-wrap:wrap; }
 .tab-btn { padding:8px; font-size:0.5rem; border:4px solid #000; background:#e63b7a; box-shadow:4px 4px #000; }
 .tab-btn.active { background:#ff75a0; }
+.tab-btn {
+  width:auto;
+  max-width:none;
+  padding:8px 10px;
+  white-space:nowrap;
+}
 
 .tab-content { display:none; margin-top:15px; }
 .tab-content.active { display:block; }
@@ -480,7 +486,7 @@ function clickMine(i, btn) {
     btn.textContent = "💎";
     btn.disabled = true;
     safeClicks++;
-    mineMultiplier = 1 + safeClicks * 0.25;
+    mineMultiplier = 1 + safeClicks * 0.15;
     updateMineInfo();
   }
 }
@@ -489,7 +495,7 @@ function cashOutMines() {
   if (!minesActive) return;
   const win = Math.floor(mineBet * mineMultiplier);
   nerds += win;
-  showPopup("Cashed out +" + win + " nerds 💰");
+  showPopup("you won +" + win + " nerds 💰");
   endMines(true);
   updateUI();
 }
